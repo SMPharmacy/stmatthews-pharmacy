@@ -107,9 +107,14 @@
     var timer = null;
     var DELAY = 6000;
 
-    // Only fetch/play the hero videos on larger screens; mobile shows the poster
-    // still image instead, so phones never download the MP4s.
-    var allowVideo = window.matchMedia('(min-width: 721px)').matches && !reduceMotion.matches;
+    // Whether to play a hero video at all, and which one. Poster still only when
+    // the visitor prefers reduced motion, has data-saver on, or is on a slow
+    // connection. Phones (< 768px) get the small portrait clip.
+    var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    var saveData = !!(conn && conn.saveData);
+    var slowConn = !!(conn && ['slow-2g', '2g', '3g'].indexOf(conn.effectiveType) !== -1);
+    var allowVideo = !reduceMotion.matches && !saveData && !slowConn;
+    var useMobileVideo = window.matchMedia('(max-width: 767px)').matches;
 
     function show(next) {
       index = (next + slides.length) % slides.length;
@@ -122,12 +127,15 @@
         var vid = s.querySelector('video[data-hero-video]');
         if (vid) {
           if (active && allowVideo) {
-            // Inject the <source> only now, so phones (allowVideo === false) never
-            // fetch the MP4 at all — the poster still is all they ever load.
-            if (!vid.dataset.loaded && vid.dataset.src) {
-              var src = document.createElement('source');
-              src.src = vid.dataset.src; src.type = 'video/mp4';
-              vid.appendChild(src); vid.dataset.loaded = '1'; vid.load();
+            // Inject the <source> only now — nothing is fetched until a slide is
+            // shown, and phones get the small portrait clip, not the full one.
+            if (!vid.dataset.loaded) {
+              var chosen = useMobileVideo ? (vid.dataset.srcMobile || vid.dataset.src) : vid.dataset.src;
+              if (chosen) {
+                var src = document.createElement('source');
+                src.src = chosen; src.type = 'video/mp4';
+                vid.appendChild(src); vid.dataset.loaded = '1'; vid.load();
+              }
             }
             var pr = vid.play(); if (pr && pr.catch) { pr.catch(function () {}); }
           } else { vid.pause(); }
