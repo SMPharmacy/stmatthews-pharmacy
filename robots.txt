@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://stmatthewspharmacy.co.uk/sitemap.xml
