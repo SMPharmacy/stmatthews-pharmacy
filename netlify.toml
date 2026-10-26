@@ -1,0 +1,65 @@
+# Netlify config — static site, no build step.
+# Deliberately no [build] section: this is deployed by dragging the folder onto
+# Netlify, so there is nothing to build and a publish/command pair here only
+# gives the deploy pipeline something to misinterpret.
+
+# The EPS nomination form posts to a serverless function, which Netlify picks up
+# from this folder and serves at /.netlify/functions/<filename>.
+# Its Resend API key comes from the RESEND_API_KEY environment variable set in
+# the Netlify dashboard — never from a file in this folder, which is public.
+[functions]
+  directory = "netlify/functions"
+
+# Let visitors hit /services as well as /services.html
+[[redirects]]
+  from = "/services"
+  to = "/services.html"
+  status = 200
+
+[[redirects]]
+  from = "/pharmacy-first"
+  to = "/pharmacy-first.html"
+  status = 200
+
+[[redirects]]
+  from = "/travel-clinic"
+  to = "/travel-clinic.html"
+  status = 200
+
+[[redirects]]
+  from = "/prescriptions"
+  to = "/prescriptions.html"
+  status = 200
+
+[[redirects]]
+  from = "/about"
+  to = "/about.html"
+  status = 200
+
+[[redirects]]
+  from = "/contact"
+  to = "/contact.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Fingerprint-free assets, so keep the cache short enough to allow edits to land.
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"

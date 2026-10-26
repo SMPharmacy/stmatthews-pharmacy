@@ -1,0 +1,1436 @@
+/* ==========================================================================
+   St Matthew's Pharmacy — shared stylesheet
+   Brand: matte black #0E0E0E · accent green #7ED321 · white #FFFFFF
+   ========================================================================== */
+
+/* Montserrat, self-hosted via Google Fonts CDN with display:swap so text
+   paints immediately in the fallback rather than blocking on the webfont. */
+/* Montserrat is loaded via a non-render-blocking <link rel="preload" as="style">
+   in each page's <head>, not @import here — @import serialised behind this
+   stylesheet and blocked first paint. */
+
+:root {
+  /* Brand green — unchanged */
+  --green: #7ED321;
+  --green-dark: #6BB81C;
+  --green-glow: rgba(126, 211, 33, 0.12);
+  --green-ink: #357A12;     /* darker green for text on LIGHT surfaces (WCAG AA) */
+
+  /* Light theme (top-ranking-pharmacy style: white page, charcoal ink, green
+     used sparingly). The variable NAMES are kept so existing rules don't need
+     rewriting: --black* are now light surfaces and --white is now the primary
+     ink colour. The header and hero re-pin these to their original dark values
+     in the two "island" blocks below, so they render exactly as before. */
+  --black: #FFFFFF;        /* page background */
+  --black-soft: #F5F8FB;   /* alt sections, cards, panels */
+  --black-lift: #EAF0F5;   /* raised chips, table head */
+  --border: #E2E8EF;       /* hairline border on light */
+  --white: #16202A;        /* primary text (charcoal) */
+  --grey: #55606C;         /* secondary text — ~6:1 on white */
+  --grey-dim: #5B646E;     /* captions / fine print — ~4.6:1 on white */
+
+  --wrap: 1200px;
+  --nav-h: 76px;
+  --radius: 10px;
+  --radius-lg: 16px;
+
+  --shadow: 0 10px 30px rgba(16, 24, 40, 0.12);
+  --card-shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --------------------------------------------------------------------------
+   Dark "islands" — keep the header/topbar and the hero exactly as designed by
+   re-pinning the original dark palette inside these subtrees only. Everything
+   else on the page inherits the light :root values above.
+   -------------------------------------------------------------------------- */
+.topbar,
+.site-header,
+.hero {
+  --black: #0E0E0E;
+  --black-soft: #161616;
+  --black-lift: #1C1C1C;
+  --border: #2A2A2A;
+  --white: #FFFFFF;
+  --grey: #A8A8A8;
+  --grey-dim: #6E6E6E;
+  --green-ink: var(--green);   /* keep brand-bright green for text on these dark islands */
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Any author `display` rule (e.g. .form-success{display:flex}) beats the UA
+   stylesheet's [hidden]{display:none}, which would leave "hidden" elements
+   on screen. Keep the attribute authoritative. */
+[hidden] { display: none !important; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+
+a { color: var(--green-ink); text-decoration: none; transition: color .2s var(--ease); }
+a:hover { color: var(--white); }
+
+h1, h2, h3, h4 {
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0 0 .6em;
+}
+h1 { font-size: clamp(2rem, 5vw, 3.25rem); }
+h2 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); }
+h3 { font-size: 1.2rem; }
+p { margin: 0 0 1.1em; }
+
+.wrap { width: min(100% - 40px, var(--wrap)); margin-inline: auto; }
+.section { padding: 84px 0; }
+.section-tight { padding: 56px 0; }
+.section-alt { background: var(--black-soft); }
+
+.eyebrow {
+  color: var(--green-ink);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  margin-bottom: .8em;
+}
+
+.lead { font-size: 1.08rem; color: var(--grey); max-width: 62ch; }
+.muted { color: var(--grey); }
+
+.section-head { max-width: 64ch; margin-bottom: 48px; }
+.section-head.center { margin-inline: auto; text-align: center; }
+
+/* Screen-reader-only text — used for landmark labels and icon buttons. */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Visible focus ring for keyboard users on every interactive element. */
+:focus-visible {
+  outline: 3px solid var(--green);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   Buttons
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .55em;
+  padding: 13px 26px;
+  border: 2px solid transparent;
+  background: transparent;
+  border-radius: 50px;
+  font-family: inherit;
+  font-size: .9rem;
+  font-weight: 700;
+  letter-spacing: .01em;
+  cursor: pointer;
+  transition: transform .2s var(--ease), background-color .2s var(--ease),
+              color .2s var(--ease), border-color .2s var(--ease);
+}
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0); }
+
+/* Green button, black text everywhere — literal #0E0E0E so it stays black even
+   though --black is now a light surface in the body. */
+.btn-primary { background: var(--green); color: #0E0E0E; }
+.btn-primary:hover { background: var(--green-dark); color: #0E0E0E; }
+
+.btn-ghost { border-color: var(--border); color: var(--white); }
+.btn-ghost:hover { border-color: var(--green); color: var(--green); }
+
+.btn-sm { padding: 9px 18px; font-size: .8rem; }
+
+/* --------------------------------------------------------------------------
+   Services strip — client's own vector, sits above the phone/address bar.
+   The artwork carries its own dark plate (rgb(26,27,26)), so the band matches
+   that exactly and the graphic doesn't read as a lighter box inside it.
+   -------------------------------------------------------------------------- */
+.services-strip {
+  background: rgb(26, 27, 26);
+  border-bottom: 1px solid #000;
+}
+.services-strip .wrap { display: flex; justify-content: center; }
+.services-strip img {
+  width: 100%;
+  max-width: 900px;
+  height: auto;
+  display: block;
+}
+@media (max-width: 1270px) {
+  /* Hidden whenever the header is in its compact hamburger mode — the same
+     services are one tap away in the Services menu. */
+  .services-strip { display: none; }
+}
+
+/* --------------------------------------------------------------------------
+   Top bar — phone + address strip above the nav
+   -------------------------------------------------------------------------- */
+.topbar {
+  background: #080808;
+  border-bottom: 1px solid var(--border);
+  font-size: .78rem;
+  color: var(--grey);
+}
+.topbar .wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  min-height: 38px;
+}
+.topbar-info { display: flex; gap: 26px; align-items: center; flex-wrap: wrap; }
+.topbar-item { display: inline-flex; align-items: center; gap: .5em; }
+.topbar-item svg { width: 13px; height: 13px; fill: var(--green); flex: none; }
+.topbar a { color: var(--grey); }
+.topbar a:hover { color: var(--green); }
+.topbar-note { color: var(--grey-dim); }
+.topbar-note strong { color: var(--green); font-weight: 600; }
+
+/* --------------------------------------------------------------------------
+   Header / navigation
+   -------------------------------------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(14, 14, 14, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+/* Header, top bar and services strip share a slightly wider container so the
+   larger logo and the evenly-spread menu have room to breathe. */
+.site-header .wrap,
+.topbar .wrap,
+.services-strip .wrap { width: min(100% - 32px, 1340px); }
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: var(--nav-h);
+  transition: min-height .28s var(--ease);
+}
+
+.brand { display: flex; align-items: center; gap: 12px; flex: none; }
+.brand:hover { color: inherit; }
+/* The header now uses the full brand lockup (icon + wordmark), so it's sized by
+   height and left to find its own width. Its dark plate is flattened to the
+   header colour in logo-lockup.svg so it reads as part of the bar. */
+.brand img { height: 33px; width: auto; transition: height .28s var(--ease); }
+.brand-text {
+  font-size: 1.22rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--white);
+  white-space: nowrap;
+  line-height: 1.1;
+}
+.brand-text .accent { color: var(--green-ink); }
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  justify-content: space-evenly;
+  gap: 2px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.nav-item { position: relative; }
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: .4em;
+  padding: 10px 10px;
+  border-radius: 6px;
+  color: var(--white);
+  font-size: .88rem;
+  font-weight: 600;
+  white-space: nowrap;
+  background: none;
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
+  transition: color .2s var(--ease), background-color .2s var(--ease);
+}
+.nav-link:hover,
+.nav-link[aria-expanded="true"] { color: var(--green); background: var(--black-lift); }
+.nav-link[aria-current="page"] { color: var(--green); }
+
+.caret {
+  width: 9px; height: 9px; fill: currentColor; flex: none;
+  transition: transform .25s var(--ease);
+}
+.nav-link[aria-expanded="true"] .caret { transform: rotate(180deg); }
+
+/* Dropdown panels */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 260px;
+  padding: 8px;
+  margin: 0;
+  list-style: none;
+  background: var(--black-lift);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity .2s var(--ease), transform .2s var(--ease), visibility .2s;
+}
+.nav-item.open .dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+
+.dropdown a {
+  display: block;
+  padding: 9px 14px;
+  border-radius: 6px;
+  color: var(--white);
+  font-size: .85rem;
+  font-weight: 500;
+}
+.dropdown a:hover { background: var(--green-glow); color: var(--green); }
+
+.nav-cta { flex: none; }
+
+/* Sticky header shrinks smoothly to a slimmer bar once the page is scrolled. */
+.site-header.scrolled .nav { min-height: 58px; }
+.site-header.scrolled .brand img { height: 30px; }
+
+/* Burger — hidden until the mobile breakpoint */
+.burger {
+  display: none;
+  width: 44px; height: 44px;
+  padding: 0;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+.burger span {
+  display: block;
+  width: 18px; height: 2px;
+  background: var(--white);
+  border-radius: 2px;
+  position: relative;
+  transition: background .2s var(--ease);
+}
+.burger span::before,
+.burger span::after {
+  content: '';
+  position: absolute; left: 0;
+  width: 18px; height: 2px;
+  background: var(--white);
+  border-radius: 2px;
+  transition: transform .25s var(--ease);
+}
+.burger span::before { top: -6px; }
+.burger span::after { top: 6px; }
+.burger[aria-expanded="true"] span { background: transparent; }
+.burger[aria-expanded="true"] span::before { transform: translateY(6px) rotate(45deg); }
+.burger[aria-expanded="true"] span::after { transform: translateY(-6px) rotate(-45deg); }
+
+/* --------------------------------------------------------------------------
+   Hero slider (home)
+   -------------------------------------------------------------------------- */
+.hero {
+  position: relative;
+  min-height: clamp(460px, 68vh, 620px);
+  overflow: hidden;
+  background: var(--black-soft);
+}
+.slide {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .8s var(--ease), visibility .8s;
+}
+.slide.active { opacity: 1; visibility: visible; }
+
+.slide-bg { position: absolute; inset: 0; z-index: 0; }
+/* Gradient sits under the photo, so a slow or failed image still looks intentional. */
+.slide-bg::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(120deg, #143d00 0%, var(--black) 70%);
+}
+.slide-bg img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: .92;
+}
+/* Dark wash on the left only, protecting text contrast, fading to fully clear
+   by ~65% so the right side of the photo shows at full strength (unlike the
+   old edge-to-edge overlay, which dimmed the whole image). The 0%-stop alpha
+   (.92) is high enough that WCAG contrast for the text holds regardless of
+   what's in the photo underneath — blending near-black at that strength drives
+   almost any pixel color close to black. */
+.slide-bg::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg,
+    rgba(14,14,14,.92) 0%,
+    rgba(14,14,14,.70) 25%,
+    rgba(14,14,14,.30) 45%,
+    rgba(14,14,14,0) 65%);
+}
+
+.slide-content { position: relative; z-index: 1; max-width: 620px; padding: 60px 0; }
+/* Slide headings are h2 — the page's single h1 is visually hidden, since a
+   rotating slide is an arbitrary thing to hang the document title on. */
+.slide-title { font-size: clamp(2rem, 5vw, 3.25rem); margin-bottom: .35em; }
+/* `color` is inherited from body, whose var(--white) already resolved to the
+   light theme's dark ink before reaching .hero's dark-island override — a
+   custom-property scoping gotcha, since inheritance carries the resolved value,
+   not the variable reference. Re-declaring color here forces it to re-resolve
+   inside .hero's scope, where --white is real white again. */
+.hero h1, .hero h2, .hero h3, .hero h4 { color: var(--white); }
+.slide-content p { font-size: 1.1rem; color: #D4D4D4; margin-bottom: 1.8em; }
+
+/* Slider controls */
+.hero-dots {
+  position: absolute;
+  bottom: 26px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  gap: 10px;
+}
+.dot {
+  width: 30px; height: 4px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, .28);
+  cursor: pointer;
+  transition: background .3s var(--ease), width .3s var(--ease);
+}
+.dot.active { background: var(--green); width: 46px; }
+
+.hero-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 44px; height: 44px;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, .45);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background .2s var(--ease), border-color .2s var(--ease);
+}
+.hero-arrow:hover { background: var(--green); border-color: var(--green); }
+.hero-arrow:hover svg { fill: var(--black); }
+.hero-arrow svg { width: 15px; height: 15px; fill: var(--white); }
+.hero-prev { left: 20px; }
+.hero-next { right: 20px; }
+
+/* --------------------------------------------------------------------------
+   Page banner (interior pages)
+   -------------------------------------------------------------------------- */
+.page-banner {
+  position: relative;
+  padding: 76px 0;
+  background: var(--black-soft);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+.page-banner::before {
+  content: '';
+  position: absolute;
+  top: -140px; right: -100px;
+  width: 460px; height: 460px;
+  background: radial-gradient(circle, var(--green-glow) 0%, transparent 70%);
+  pointer-events: none;
+}
+.page-banner .wrap { position: relative; }
+.page-banner h1 { margin-bottom: .3em; }
+
+/* Photo hero variant (Travel Clinic). The overlay is weighted to the left so the
+   heading stays readable while the right side of the photo shows at full strength.
+   Alpha stops are chosen so that even over a pure-white pixel the text zone
+   (roughly the left half) stays above WCAG AA: at the 52% stop the composite is
+   ~rgb(106), giving white text ~5.2:1. Falls back to flat black if the image
+   hasn't been generated yet, which still looks intentional. */
+.page-banner--photo {
+  padding: 118px 0;
+  border-bottom: 0;
+  background-color: #0E0E0E;
+  background-image:
+    linear-gradient(90deg,
+      rgba(14,14,14,.90) 0%,
+      rgba(14,14,14,.78) 35%,
+      rgba(14,14,14,.62) 52%,
+      rgba(14,14,14,.22) 78%,
+      rgba(14,14,14,.06) 100%),
+    /* Per-page image, set inline via --banner-img; travel is the default. */
+    var(--banner-img, url('/images/services/travel-clinic-hero.webp'));
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+/* Drop the green corner glow — the photo carries the visual interest here. */
+.page-banner--photo::before { display: none; }
+/* The body is light-themed now, so the text needs explicitly setting to white. */
+.page-banner--photo h1 { color: #FFFFFF; }
+.page-banner--photo .lead { color: rgba(255,255,255,.92); max-width: 34rem; }
+.page-banner--photo .crumb { color: rgba(255,255,255,.65); }
+.page-banner--photo .crumb a { color: rgba(255,255,255,.85); }
+.page-banner--photo .crumb a:hover { color: var(--green); }
+
+@media (max-width: 720px) {
+  /* Narrow screens put text across the full width, so the left-weighted gradient
+     no longer covers it — use an even wash instead. */
+  .page-banner--photo {
+    padding: 76px 0;
+    background-image:
+      linear-gradient(rgba(14,14,14,.72), rgba(14,14,14,.72)),
+      var(--banner-img, url('/images/services/travel-clinic-hero.webp'));
+  }
+  .page-banner--photo .lead { max-width: none; }
+}
+
+.crumb { font-size: .8rem; color: var(--grey-dim); margin-bottom: 1.2em; }
+.crumb a { color: var(--grey); }
+.crumb a:hover { color: var(--green); }
+.crumb span { margin: 0 .5em; }
+
+/* --------------------------------------------------------------------------
+   Cards / grids
+   -------------------------------------------------------------------------- */
+.grid { display: grid; gap: 26px; }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+.card {
+  background: var(--black-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform .28s var(--ease), border-color .28s var(--ease);
+}
+.card:hover { transform: translateY(-5px); border-color: var(--green); }
+
+/* Gradient placeholder shows through if a photo is slow or missing. */
+.card-media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: linear-gradient(135deg, #1F3D0A, var(--black-lift));
+  overflow: hidden;
+}
+.card-media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .5s var(--ease);
+}
+.card:hover .card-media img { transform: scale(1.06); }
+
+.card-body { padding: 24px; display: flex; flex-direction: column; flex: 1; }
+.card-body h3 { margin-bottom: .5em; }
+.card-body p { color: var(--grey); font-size: .9rem; flex: 1; }
+.card-body .btn { align-self: flex-start; margin-top: 8px; }
+/* Book + Read More sit side by side and wrap on narrow cards. */
+.card-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.card-actions .btn { margin-top: 0; }
+@media (pointer: coarse) {
+  /* Booking is the primary action, so keep it a comfortable touch target. */
+  .card-actions .btn { min-height: 44px; }
+}
+
+.tag {
+  position: absolute;
+  top: 12px; left: 12px;
+  z-index: 1;
+  padding: 5px 11px;
+  border-radius: 50px;
+  background: var(--green);
+  color: #0E0E0E;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+/* Plain bordered panel */
+.panel {
+  background: var(--black-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+}
+.panel h3 { color: var(--green-ink); }
+
+/* Numbered / iconed feature row */
+.feature { display: flex; gap: 18px; align-items: flex-start; }
+.feature-num {
+  flex: none;
+  width: 40px; height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--green-glow);
+  border: 1px solid var(--green);
+  color: var(--green-ink);
+  font-weight: 800;
+  font-size: .95rem;
+}
+.feature h3 { margin-bottom: .3em; }
+.feature p { color: var(--grey); font-size: .92rem; margin: 0; }
+
+/* Tick list */
+.ticks { list-style: none; padding: 0; margin: 0; }
+.ticks li {
+  position: relative;
+  padding: 0 0 12px 30px;
+  color: var(--grey);
+  font-size: .93rem;
+}
+.ticks li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 7px;
+  width: 16px; height: 16px;
+  background: var(--green);
+  border-radius: 50%;
+  /* Tick glyph punched out of the green disc. */
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M6.5 11.5 3.5 8.5l1-1 2 2 5-5 1 1z'/%3E%3C/svg%3E") center / 22px no-repeat,
+          linear-gradient(#000, #000);
+  -webkit-mask-composite: xor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M6.5 11.5 3.5 8.5l1-1 2 2 5-5 1 1z'/%3E%3C/svg%3E") center / 22px no-repeat,
+        linear-gradient(#000, #000);
+  mask-composite: exclude;
+}
+
+/* --------------------------------------------------------------------------
+   Opening hours box
+   -------------------------------------------------------------------------- */
+.hours { list-style: none; padding: 0; margin: 0; }
+.hours li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: .92rem;
+}
+.hours li:last-child { border-bottom: 0; }
+.hours .day { color: var(--grey); }
+.hours .time { font-weight: 600; color: var(--white); }
+.hours .closed { color: var(--grey-dim); font-weight: 500; }
+/* Highlights whichever row is today — set by js/main.js */
+.hours li.today .day { color: var(--green-ink); font-weight: 700; }
+.hours li.today .day::after {
+  content: 'Today';
+  margin-left: .6em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--green-glow);
+  font-size: .62rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+/* Live open/closed pill */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: .5em;
+  padding: 6px 13px;
+  border-radius: 50px;
+  font-size: .78rem;
+  font-weight: 700;
+}
+.status::before {
+  content: '';
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.status.open { background: var(--green-glow); color: var(--green-ink); }
+/* Uses currentColor-neutral tints so it works on both the light body and the
+   dark topbar island. */
+.status.shut { background: rgba(128, 128, 128, .16); color: var(--grey); }
+
+/* --------------------------------------------------------------------------
+   Testimonials
+   -------------------------------------------------------------------------- */
+.quote {
+  background: var(--black-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.stars { display: flex; gap: 3px; }
+.stars svg { width: 15px; height: 15px; fill: var(--green); }
+.quote p { font-size: .95rem; color: var(--grey); font-style: italic; margin: 0; flex: 1; }
+.quote-by { display: flex; align-items: center; gap: 12px; }
+.avatar {
+  width: 38px; height: 38px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--green-glow);
+  border: 1px solid var(--green);
+  color: var(--green-ink);
+  font-weight: 700;
+  font-size: .85rem;
+}
+.quote-by strong { display: block; font-size: .88rem; font-weight: 600; }
+.quote-by span { font-size: .75rem; color: var(--grey-dim); }
+
+/* --------------------------------------------------------------------------
+   Split media/text block
+   -------------------------------------------------------------------------- */
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+  align-items: center;
+}
+.split-media {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: linear-gradient(135deg, #1F3D0A, var(--black-lift));
+}
+.split-media img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Stat strip */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 32px; }
+.stat strong {
+  display: block;
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--green);
+  line-height: 1;
+  margin-bottom: .25em;
+}
+.stat span { font-size: .78rem; color: var(--grey); }
+
+/* --------------------------------------------------------------------------
+   Conditions grid (Pharmacy First)
+   -------------------------------------------------------------------------- */
+.condition {
+  position: relative;
+  background: var(--black-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 26px;
+  transition: border-color .28s var(--ease), transform .28s var(--ease);
+}
+.condition:hover { border-color: var(--green); transform: translateY(-4px); }
+.condition-icon {
+  width: 46px; height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--green-glow);
+  margin-bottom: 18px;
+}
+.condition-icon svg { width: 22px; height: 22px; fill: var(--green); }
+.condition h3 { margin-bottom: .4em; font-size: 1.08rem; }
+.condition p { font-size: .87rem; color: var(--grey); margin: 0 0 14px; }
+.age {
+  display: inline-block;
+  padding: 4px 11px;
+  border-radius: 50px;
+  background: var(--black-lift);
+  border: 1px solid var(--border);
+  color: var(--green);
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   Callout / notice
+   -------------------------------------------------------------------------- */
+.notice {
+  display: flex;
+  gap: 18px;
+  padding: 24px 26px;
+  border-radius: var(--radius);
+  background: var(--black-soft);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+}
+.notice svg { width: 22px; height: 22px; fill: var(--green); flex: none; margin-top: 2px; }
+.notice h3 { margin-bottom: .3em; font-size: 1rem; }
+.notice p { margin: 0; font-size: .9rem; color: var(--grey); }
+.notice.warn { border-left-color: #E8B32C; }
+.notice.warn svg { fill: #E8B32C; }
+
+/* --------------------------------------------------------------------------
+   Tables (vaccine prices)
+   -------------------------------------------------------------------------- */
+.table-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+table { width: 100%; border-collapse: collapse; min-width: 460px; }
+thead { background: var(--black-lift); }
+th, td { padding: 15px 20px; text-align: left; font-size: .9rem; }
+th {
+  font-weight: 700;
+  font-size: .75rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--green-ink);
+}
+td { border-top: 1px solid var(--border); color: var(--grey); }
+td:first-child { color: var(--white); font-weight: 600; }
+.price { color: var(--green-ink); font-weight: 700; white-space: nowrap; }
+
+/* --------------------------------------------------------------------------
+   Accordion (FAQ)
+   -------------------------------------------------------------------------- */
+.acc { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.acc + .acc { margin-top: 12px; }
+.acc-btn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 22px;
+  background: var(--black-soft);
+  border: 0;
+  color: var(--white);
+  font-family: inherit;
+  font-size: .95rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: color .2s var(--ease);
+}
+.acc-btn:hover { color: var(--green); }
+.acc-btn .plus {
+  flex: none;
+  width: 18px; height: 18px;
+  position: relative;
+}
+.acc-btn .plus::before,
+.acc-btn .plus::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  background: var(--green);
+  transform: translate(-50%, -50%);
+  transition: transform .25s var(--ease);
+}
+.acc-btn .plus::before { width: 12px; height: 2px; }
+.acc-btn .plus::after { width: 2px; height: 12px; }
+.acc-btn[aria-expanded="true"] .plus::after { transform: translate(-50%, -50%) rotate(90deg); }
+
+.acc-panel { display: none; padding: 0 22px 20px; }
+.acc-panel p { margin: 0; font-size: .9rem; color: var(--grey); }
+.acc-panel.open { display: block; }
+
+/* --------------------------------------------------------------------------
+   Forms
+   -------------------------------------------------------------------------- */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.field { display: flex; flex-direction: column; gap: 7px; }
+.field.full { grid-column: 1 / -1; }
+.field label { font-size: .82rem; font-weight: 600; }
+.field .req { color: var(--green-ink); }
+
+.field input,
+.field select,
+.field textarea {
+  padding: 12px 15px;
+  background: var(--black);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--white);
+  font-family: inherit;
+  font-size: .9rem;
+  transition: border-color .2s var(--ease);
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus { outline: none; border-color: var(--green); }
+.field textarea { resize: vertical; min-height: 130px; }
+.field input::placeholder, .field textarea::placeholder { color: var(--grey-dim); }
+
+.form-note { font-size: .76rem; color: var(--grey-dim); }
+.muted-note { color: var(--grey-dim); font-weight: 400; }
+
+/* EPS nomination form ----------------------------------------------------- */
+.eps-form .field textarea { min-height: 92px; }
+.field-hint { margin: 2px 0 0; font-size: .76rem; color: var(--grey-dim); }
+
+/* Consent tick. Sized generously because it gates the whole submission. */
+.field-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: .88rem;
+  font-weight: 400;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.field-check input[type="checkbox"] {
+  flex: none;
+  width: 22px; height: 22px;
+  margin: 1px 0 0;
+  accent-color: var(--green);
+  cursor: pointer;
+}
+.field-check span { color: var(--grey); }
+
+.form-error {
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border-left: 3px solid #C0392B;
+  background: rgba(192, 57, 43, .08);
+  color: #A5342A;
+  font-size: .88rem;
+}
+
+/* Replaces the form on success. */
+.form-success {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-top: 24px;
+  padding: 20px 22px;
+  border-radius: var(--radius);
+  border-left: 3px solid var(--green);
+  background: var(--green-glow);
+}
+.form-success svg { width: 22px; height: 22px; fill: var(--green); flex: none; margin-top: 2px; }
+.form-success p { margin: 0; color: var(--white); font-weight: 600; font-size: .95rem; }
+
+@media (max-width: 720px) {
+  /* Submitting is the primary action here, so give it the full width. */
+  .eps-form button[type="submit"] { width: 100%; justify-content: center; min-height: 48px; }
+}
+
+/* --------------------------------------------------------------------------
+   Legal pages (privacy, cookies, terms, disclaimer)
+   -------------------------------------------------------------------------- */
+.legal { max-width: 80ch; }
+.legal h2 {
+  font-size: 1.35rem;
+  margin-top: 2.4em;
+  margin-bottom: .7em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--border);
+}
+.legal > h2:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.legal h3 { font-size: 1rem; margin-bottom: .3em; }
+.legal p { color: var(--grey); }
+.legal .ticks { margin-bottom: 1.5em; }
+.legal .ticks li strong { color: var(--white); }
+.legal .table-scroll { margin: 1.5em 0 2em; }
+.legal .notice { margin-bottom: 2em; }
+.legal-updated {
+  margin-top: 3em;
+  padding-top: 1.4em;
+  border-top: 1px solid var(--border);
+  font-size: .85rem;
+  color: var(--grey-dim);
+}
+
+/* --------------------------------------------------------------------------
+   Cookie consent banner + preferences modal
+   Kept on the dark brand palette regardless of the light page theme, so it
+   reads as a system-level notice rather than page content.
+   -------------------------------------------------------------------------- */
+.cookie-banner {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 10000;
+  background: #0E0E0E;
+  border-top: 2px solid var(--green);
+  padding: 20px 0;
+  transform: translateY(110%);
+  transition: transform .35s var(--ease);
+}
+.cookie-banner.show { transform: translateY(0); }
+.cookie-banner .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+.cookie-banner p {
+  margin: 0;
+  max-width: 64ch;
+  font-size: .88rem;
+  color: #D4D4D4;
+}
+.cookie-banner a { color: var(--green); text-decoration: underline; }
+.cookie-banner a:hover { color: #FFFFFF; }
+.cookie-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+/* The banner sits on dark, so its ghost buttons need dark-theme colours even
+   though the surrounding page is light. */
+.cookie-banner .btn-ghost,
+.cookie-modal .btn-ghost { border-color: #FFFFFF; color: #FFFFFF; }
+.cookie-banner .btn-ghost:hover,
+.cookie-modal .btn-ghost:hover { border-color: var(--green); color: var(--green); }
+
+.cookie-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.cookie-modal.show { display: flex; }
+.cookie-modal-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, .65); }
+.cookie-modal-panel {
+  position: relative;
+  width: min(100%, 560px);
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #0E0E0E;
+  border: 1px solid #2A2A2A;
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
+}
+.cookie-modal-panel h2 { font-size: 1.3rem; color: #FFFFFF; margin-bottom: .4em; }
+.cookie-modal-panel > p { font-size: .88rem; color: #A8A8A8; }
+
+.cookie-cat {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 0;
+  border-bottom: 1px solid #2A2A2A;
+}
+.cookie-cat:last-of-type { border-bottom: 0; }
+.cookie-cat h3 { margin: 0 0 .35em; font-size: .95rem; color: #FFFFFF; }
+.cookie-cat p { margin: 0; font-size: .82rem; color: #A8A8A8; }
+.cookie-cat .locked { font-size: .72rem; color: var(--green); font-weight: 700; white-space: nowrap; }
+
+/* Toggle switch */
+.switch { position: relative; width: 46px; height: 26px; flex: none; }
+.switch input {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  margin: 0; opacity: 0; cursor: pointer;
+}
+.switch input:disabled { cursor: not-allowed; }
+.switch .track {
+  position: absolute; inset: 0;
+  background: #2A2A2A;
+  border-radius: 50px;
+  transition: background .2s var(--ease);
+  pointer-events: none;
+}
+.switch .thumb {
+  position: absolute; top: 3px; left: 3px;
+  width: 20px; height: 20px;
+  background: #FFFFFF;
+  border-radius: 50%;
+  transition: transform .2s var(--ease);
+  pointer-events: none;
+}
+.switch input:checked ~ .track { background: var(--green); }
+.switch input:checked ~ .thumb { transform: translateX(20px); }
+.switch input:disabled ~ .track { opacity: .45; }
+.switch input:focus-visible ~ .track { outline: 3px solid var(--green); outline-offset: 3px; }
+
+.cookie-modal-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #2A2A2A;
+}
+
+@media (max-width: 720px) {
+  .cookie-banner { padding: 16px 0; }
+  .cookie-banner .wrap { gap: 14px; }
+  .cookie-banner p { font-size: .84rem; }
+  .cookie-actions { width: 100%; }
+  .cookie-actions .btn { flex: 1 1 auto; justify-content: center; min-height: 44px; }
+  .cookie-modal-panel { padding: 22px; }
+  .cookie-modal-actions .btn { flex: 1 1 auto; justify-content: center; min-height: 44px; }
+}
+
+/* --------------------------------------------------------------------------
+   Cal.com booking embeds
+   Cal's own snippet uses height:100%, which collapses inside a normal section,
+   so the height is set here instead. Full width and responsive by default.
+   -------------------------------------------------------------------------- */
+.cal-embed {
+  width: 100%;
+  min-height: 640px;
+  overflow: auto;
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+@media (max-width: 720px) {
+  .cal-embed { min-height: 560px; border-radius: var(--radius); }
+}
+
+/* Click-to-load wrapper. The calendar is only fetched once the visitor asks
+   for it, so nothing reaches app.cal.com before that. */
+.cal-defer { text-align: center; }
+.cal-defer-note {
+  color: var(--grey);
+  font-size: .92rem;
+  margin: 0 0 16px;
+}
+.cal-defer-btn { min-height: 48px; }
+.cal-defer-btn[disabled] { opacity: .75; cursor: wait; transform: none; }
+/* Once the calendar is on screen the prompt has done its job. */
+.cal-defer.is-loaded .cal-defer-note,
+.cal-defer.is-loaded .cal-defer-btn { display: none; }
+.cal-defer .cal-embed { margin-top: 20px; text-align: left; }
+.cal-defer-error {
+  margin: 16px 0 0;
+  font-size: .9rem;
+  color: var(--text-danger, #B3261E);
+}
+
+@media (max-width: 720px) {
+  /* Full width on mobile, as a primary action should be. */
+  .cal-defer-btn { width: 100%; justify-content: center; }
+}
+
+/* --------------------------------------------------------------------------
+   Map
+   -------------------------------------------------------------------------- */
+.map {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  line-height: 0;
+}
+.map iframe { width: 100%; height: 420px; border: 0; display: block; }
+
+/* --------------------------------------------------------------------------
+   CTA band
+   -------------------------------------------------------------------------- */
+.cta {
+  position: relative;
+  padding: 72px 0;
+  background: var(--black-soft);
+  border-block: 1px solid var(--border);
+  text-align: center;
+  overflow: hidden;
+}
+.cta::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px; height: 400px;
+  background: radial-gradient(ellipse, var(--green-glow) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta .wrap { position: relative; }
+.cta p { max-width: 54ch; margin-inline: auto; color: var(--grey); }
+.cta-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+.site-footer {
+  background: #EDF2F7;
+  border-top: 1px solid var(--border);
+  padding: 64px 0 0;
+  font-size: .87rem;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.1fr;
+  gap: 44px;
+  padding-bottom: 48px;
+}
+.footer-col h3 {
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--green-ink);
+  margin-bottom: 1.4em;
+}
+.footer-col ul { list-style: none; padding: 0; margin: 0; }
+.footer-col li { margin-bottom: 10px; }
+.footer-col a { color: var(--grey); }
+.footer-col a:hover { color: var(--green); }
+
+.footer-brand { display: flex; align-items: center; gap: 11px; margin-bottom: 18px; }
+.footer-brand img { width: 38px; height: 38px; }
+.footer-about { color: var(--grey); font-size: .85rem; margin-bottom: 20px; }
+
+.footer-contact li {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  color: var(--grey);
+}
+.footer-contact svg { width: 14px; height: 14px; fill: var(--green); flex: none; margin-top: 5px; }
+
+.footer-hours li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--grey);
+  font-size: .83rem;
+}
+
+/* Regulatory details — GPhC, company no., superintendent */
+.footer-reg { font-size: .78rem; color: var(--grey-dim); line-height: 1.9; }
+.footer-reg strong { color: var(--grey); font-weight: 600; }
+
+.socials { display: flex; gap: 10px; }
+.socials a {
+  width: 36px; height: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  transition: background .2s var(--ease), border-color .2s var(--ease), transform .2s var(--ease);
+}
+.socials a:hover { background: var(--green); border-color: var(--green); transform: translateY(-2px); }
+.socials a:hover svg { fill: var(--black); }
+.socials svg { width: 15px; height: 15px; fill: var(--grey); transition: fill .2s var(--ease); }
+
+.footer-bottom {
+  border-top: 1px solid var(--border);
+  padding: 22px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  font-size: .78rem;
+  color: var(--grey-dim);
+}
+.footer-bottom a { color: var(--grey-dim); text-decoration: underline; }
+.footer-bottom a:hover { color: var(--green); }
+.footer-legal { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+/* "Cookie settings" must be a button (it opens a dialog) but should read as a
+   link alongside the legal pages. */
+.footer-cookie-btn {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--grey-dim);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.footer-cookie-btn:hover { color: var(--green); }
+
+/* --------------------------------------------------------------------------
+   Reveal-on-scroll
+   Scoped to .js — a class an inline script in each <head> sets before paint.
+   Without JavaScript the class never lands, so content is simply visible
+   rather than stuck at opacity 0 waiting for an observer that never runs.
+   -------------------------------------------------------------------------- */
+.js .reveal { opacity: 0; transform: translateY(22px); }
+.js .reveal.in { opacity: 1; transform: none; transition: opacity .6s var(--ease), transform .6s var(--ease); }
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+@media (max-width: 1080px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
+}
+
+@media (max-width: 1270px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .split { grid-template-columns: 1fr; gap: 36px; }
+  .topbar-note { display: none; }
+
+  /* Nav collapses to a slide-down panel */
+  .burger { display: flex; }
+
+  /* CRITICAL: backdrop-filter establishes a containing block for fixed-position
+     descendants, so the panel below would resolve its `fixed` offsets against
+     this 77px-tall header instead of the viewport — collapsing it to ~55px and
+     spilling the dropdown items out onto the page, where content painted over
+     them. The blur is decorative, so it's dropped at mobile widths. */
+  .site-header { backdrop-filter: none; }
+
+  .nav-menu {
+    position: fixed;
+    /* Fallback only — main.js sets this to the header's real bottom edge on
+       open, because the sticky header sits lower at the top of the page than
+       it does once scrolled. */
+    top: 115px;
+    left: 0; right: 0;
+    bottom: 0;
+    z-index: 9999;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 14px 20px 40px;
+    background: var(--black);
+    border-top: 1px solid var(--border);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform .3s var(--ease), visibility .3s;
+  }
+  .nav-menu.open { transform: translateX(0); visibility: visible; }
+
+  .nav-link {
+    width: 100%;
+    justify-content: space-between;
+    min-height: 48px;
+    padding: 15px 6px;
+    font-size: 1rem;
+    border-radius: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-link:hover, .nav-link[aria-expanded="true"] { background: none; }
+
+  /* Dropdowns become inline accordions rather than floating panels */
+  .dropdown {
+    position: relative;      /* needed for z-index to take effect */
+    z-index: 9999;
+    /* The desktop rule sets `top: calc(100% + 8px)` to float the panel below
+       the nav item. That is ignored while position is static, but `relative`
+       honours it — which pushed each accordion down by its own row height + 8px.
+       Neutralise both offsets here. */
+    top: auto;
+    left: auto;
+    min-width: 0;
+    max-height: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: #000000;     /* solid black, fully opaque */
+    box-shadow: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    overflow: hidden;
+    transition: max-height .3s var(--ease), padding .3s var(--ease);
+  }
+  /* Tall enough for 7 items at 44px + padding, so nothing is clipped. */
+  .nav-item.open .dropdown { max-height: 480px; padding: 8px 0; }
+  .dropdown a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;        /* minimum comfortable touch target */
+    padding: 11px 20px;
+    color: var(--grey);
+  }
+
+  .nav-cta { display: none; }
+  /* CTA is repeated inside the panel so it stays reachable on mobile */
+  .nav-menu .nav-cta-mobile { display: block; margin-top: 22px; }
+  .nav-menu .nav-cta-mobile .btn { width: 100%; justify-content: center; }
+
+  body.nav-open { overflow: hidden; }
+}
+
+@media (min-width: 1271px) {
+  .nav-cta-mobile { display: none; }
+}
+
+@media (max-width: 720px) {
+  .section { padding: 60px 0; }
+  .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: 1fr; gap: 14px; }
+  .footer-grid { grid-template-columns: 1fr; gap: 34px; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+  .hero-arrow { display: none; }
+  .topbar .wrap { justify-content: center; }
+  .topbar-info { gap: 16px; justify-content: center; }
+  .panel { padding: 24px; }
+  .slide-content { padding: 40px 0; }
+}
+
+/* The lockup is wide, so step it down on smaller headers to leave room for the
+   burger. */
+@media (max-width: 720px) {
+  .brand img { height: 28px; }
+}
+@media (max-width: 380px) {
+  .brand-text { font-size: 1.02rem; }
+  .brand img { height: 23px; }
+}
+
+/* --------------------------------------------------------------------------
+   Motion & print
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .js .reveal { opacity: 1; transform: none; }
+}
+
+@media print {
+  .site-header, .topbar, .hero-dots, .hero-arrow, .cta, .socials { display: none; }
+  body { background: #fff; color: #000; }
+}
+
+/* --------------------------------------------------------------------------
+   Light-theme card lift — soft shadows so cards read as raised on the white
+   page, the way top-ranking pharmacy sites do. Appended so the base rules stay
+   untouched.
+   -------------------------------------------------------------------------- */
+.card, .panel, .quote { box-shadow: var(--card-shadow); }
+.card { transition: transform .28s var(--ease), border-color .28s var(--ease), box-shadow .28s var(--ease); }
+.card:hover { box-shadow: 0 14px 30px rgba(16, 24, 40, 0.10); }
+/* Inputs sit on white cards, so give them a faint inner surface tint. */
+.field input, .field select, .field textarea { background: #FFFFFF; }
+
+/* GPhC register links — the premises (1034117) and pharmacist (2237265)
+   registration numbers link straight to the official GPhC register, so they
+   must read as clickable wherever they appear. Underlined everywhere; the
+   brand green in the dark footer island where it stands out on-brand. */
+a[href*="pharmacyregulation.org"] { text-decoration: underline; }
+.site-footer a[href*="pharmacyregulation.org"] { color: var(--green-ink); }

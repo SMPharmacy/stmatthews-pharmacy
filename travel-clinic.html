@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Travel Clinic | St Matthew's Pharmacy, Leicester</title>
+<meta name="description" content="Travel vaccinations in Leicester — antimalarials, Hajj and Umrah Meningitis ACWY, and speciality vaccines. Book 6–8 weeks before you travel.">
+<link rel="icon" href="/images/logo-icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Marks that JS is available, before first paint, so the reveal animation
+     in style.css can stay inert when it is not. -->
+<script>document.documentElement.classList.add('js')</script>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"></noscript>
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  /* ===== Travel vaccine selector (travel-clinic.html only) =================
+     A self-contained dark "island" section in the site's palette. All styles
+     are scoped under .vac-selector so nothing else on the site is affected. */
+  .vac-selector{ background:#0E0E0E; color:#fff; padding:60px 0; }
+  .vac-selector .wrap{ width:min(100% - 40px, 1200px); margin-inline:auto; }
+  .vac-selector .vac-head{ max-width:760px; margin:0 0 30px; }
+  .vac-selector h2{ font-size:clamp(1.6rem,4vw,2.2rem); font-weight:800; letter-spacing:-.02em; margin:0 0 .35em; color:#fff; }
+  .vac-selector .vac-sub{ margin:0; color:#B9BFC6; font-size:1.02rem; }
+
+  .vac-grid{ display:grid; grid-template-columns:1fr 1fr; gap:34px; align-items:start; }
+  /* let both columns split evenly and allow the tab row to scroll instead of
+     forcing the left column wider than its 1fr share */
+  .vac-grid > *{ min-width:0; }
+
+  /* --- left column --- */
+  .vac-panel-title{ font-size:.72rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#7ED321; margin:0 0 12px; }
+  .vac-tabs{ display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; -webkit-overflow-scrolling:touch; scrollbar-width:thin; }
+  .vac-tab{ flex:0 0 auto; font:inherit; font-size:.9rem; font-weight:600; color:#E6E8EB; background:#191919; border:1px solid #2C2C2C; border-radius:50px; padding:9px 16px; cursor:pointer; white-space:nowrap; transition:background-color .18s ease, color .18s ease, border-color .18s ease; }
+  .vac-tab:hover{ border-color:#7ED321; }
+  .vac-tab[aria-selected="true"]{ background:#7ED321; color:#0E0E0E; border-color:#7ED321; }
+  .vac-countries{ display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
+  .vac-country{ font:inherit; font-size:.88rem; font-weight:600; color:#E6E8EB; background:transparent; border:1px solid #2C2C2C; border-radius:8px; padding:9px 13px; cursor:pointer; transition:background-color .18s ease, color .18s ease, border-color .18s ease, transform .18s ease; }
+  .vac-country:hover{ border-color:#7ED321; transform:translateY(-1px); }
+  .vac-country[aria-pressed="true"]{ background:#7ED321; color:#0E0E0E; border-color:#7ED321; }
+
+  /* --- right column --- */
+  .vac-result{ background:#151515; border:1px solid #262626; border-radius:16px; padding:26px; min-height:220px; }
+  .vac-prompt{ color:#9AA0A6; font-size:1rem; display:flex; gap:12px; align-items:flex-start; }
+  .vac-prompt svg{ width:22px; height:22px; fill:#7ED321; flex:none; margin-top:1px; }
+  .vac-result h3{ font-size:1.3rem; font-weight:800; margin:0 0 6px; color:#fff; }
+  .vac-result .vac-country-note{ margin:0 0 18px; padding:12px 14px; border-left:3px solid #7ED321; background:rgba(126,211,33,.10); border-radius:8px; font-size:.9rem; color:#E6E8EB; }
+  .vac-group{ margin-top:22px; }
+  .vac-group:first-of-type{ margin-top:6px; }
+  .vac-group-h{ font-size:.72rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#7ED321; margin:0 0 12px; }
+  .vac-cards{ display:grid; gap:10px; }
+  .vac-card{ border:1px solid #2A2A2A; border-radius:12px; padding:13px 15px; background:#1B1B1B; }
+  .vac-card.malaria{ border-color:#4a3d16; background:rgba(126,211,33,.06); }
+  .vac-card h4{ margin:0 0 3px; font-size:.98rem; font-weight:700; color:#fff; }
+  .vac-card p{ margin:0; font-size:.85rem; line-height:1.5; color:#B9BFC6; }
+  .vac-routine{ margin:20px 0 0; font-size:.82rem; color:#9AA0A6; }
+
+  .vac-actions{ display:flex; flex-wrap:wrap; gap:12px; margin-top:24px; }
+  .vac-actions .btn{ flex:0 1 auto; }
+  .vac-btn-outline{ display:inline-flex; align-items:center; justify-content:center; gap:.5em; font:inherit; font-weight:700; padding:13px 22px; border-radius:50px; text-decoration:none; cursor:pointer; background:transparent; color:#fff; border:2px solid #7ED321; transition:background-color .15s ease, color .15s ease; }
+  .vac-btn-outline:hover{ background:#7ED321; color:#0E0E0E; }
+
+  /* fade when switching countries */
+  .vac-fade{ opacity:0; transform:translateY(6px); }
+  .vac-fade.in{ opacity:1; transform:none; transition:opacity .28s ease, transform .28s ease; }
+  @media (prefers-reduced-motion:reduce){ .vac-fade,.vac-fade.in{ transition:none; transform:none; } }
+
+  .vac-disclaimer{ margin:30px 0 0; padding-top:20px; border-top:1px solid #262626; font-size:.82rem; color:#9AA0A6; max-width:820px; }
+
+  /* progressive enhancement: tool hidden until JS marks the section ready */
+  .vac-tool{ display:none; }
+  .vac-selector[data-ready] .vac-tool{ display:block; }
+  .vac-selector[data-ready] .vac-fallback{ display:none; }
+  .vac-fallback .vac-actions{ margin-top:16px; }
+
+  @media (max-width:900px){
+    .vac-grid{ grid-template-columns:1fr; gap:22px; }
+    .vac-result{ padding:22px; }
+  }
+</style>
+</head>
+<body>
+
+<a class="sr-only" href="#main">Skip to content</a>
+
+<!-- ===== Services strip (client vector) =============================== -->
+<div class="services-strip">
+  <div class="wrap">
+    <img src="/images/services-strip.svg" width="977" height="114" loading="lazy"
+         alt="Travel vaccinations, ear wax removal, delivery services, private prescriptions, contraceptive service, free blood pressure checks">
+  </div>
+</div>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="topbar-info">
+      <a class="topbar-item" href="tel:+441163602000">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.6 1.3a1 1 0 0 1 1.4.2l1.5 2a1 1 0 0 1-.1 1.3l-.9.9a9 9 0 0 0 4.1 4.1l.9-.9a1 1 0 0 1 1.3-.1l2 1.5a1 1 0 0 1 .2 1.4l-1 1.3a1.6 1.6 0 0 1-1.8.5C7.6 12.6 3.4 8.4 1.8 3.1a1.6 1.6 0 0 1 .5-1.8z"/></svg>
+        0116 360 2000
+      </a>
+      <span class="topbar-item">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0a5 5 0 0 0-5 5c0 3.8 5 11 5 11s5-7.2 5-11a5 5 0 0 0-5-5zm0 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
+        44 Malabar Road, Leicester, LE1 2PD
+      </span>
+    </div>
+    <div class="topbar-note">NHS contracted pharmacy &middot; <strong class="status">Open now</strong></div>
+  </div>
+</div>
+
+<header class="site-header">
+  <nav class="wrap nav" aria-label="Main">
+    <a class="brand" href="index.html">
+      <img src="/images/logo-lockup.svg" alt="St Matthew's Pharmacy">
+    </a>
+
+    <ul class="nav-menu">
+      <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+
+      <li class="nav-item has-drop">
+        <button class="nav-link" aria-expanded="false">Travel Clinic
+          <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M0 0h10L5 6z"/></svg>
+        </button>
+        <ul class="dropdown">
+          <li><a href="travel-clinic.html#vaccinations">Travel Vaccinations</a></li>
+          <li><a href="travel-clinic.html#antimalarials">Antimalarials</a></li>
+          <li><a href="travel-clinic.html#hajj">Hajj &amp; Umrah Vaccines</a></li>
+          <li><a href="travel-clinic.html#speciality">Speciality Vaccines</a></li>
+          <li><a href="travel-clinic.html#prices">Vaccine Prices</a></li>
+        </ul>
+      </li>
+
+      <li class="nav-item has-drop">
+        <button class="nav-link" aria-expanded="false">Services
+          <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M0 0h10L5 6z"/></svg>
+        </button>
+        <ul class="dropdown">
+          <li><a href="services.html#ear-wax">Ear Wax Removal</a></li>
+          <li><a href="services.html#weight-loss">Weight Loss Service</a></li>
+          <li><a href="services.html#b12">Vitamin B12 Injections</a></li>
+          <li><a href="services.html#blood-pressure">Free NHS Blood Pressure Checks</a></li>
+          <li><a href="services.html#contraception">Contraception Service</a></li>
+          <li><a href="services.html#nms">New Medicine Service</a></li>
+          <li><a href="services.html#disposal">Disposal of Unwanted Medicines</a></li>
+          <li><a href="services.html">All Services</a></li>
+        </ul>
+      </li>
+
+      <li class="nav-item has-drop">
+        <button class="nav-link" aria-expanded="false">Pharmacy First
+          <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M0 0h10L5 6z"/></svg>
+        </button>
+        <ul class="dropdown">
+          <li><a href="pharmacy-first.html">Pharmacy First overview</a></li>
+          <li><a href="pharmacy-first-sinusitis.html">Sinusitis</a></li>
+          <li><a href="pharmacy-first-sore-throat.html">Sore Throat</a></li>
+          <li><a href="pharmacy-first-earache.html">Earache</a></li>
+          <li><a href="pharmacy-first-insect-bite.html">Infected Insect Bite</a></li>
+          <li><a href="pharmacy-first-impetigo.html">Impetigo</a></li>
+          <li><a href="pharmacy-first-shingles.html">Shingles</a></li>
+          <li><a href="pharmacy-first-uti.html">Urinary Tract Infection</a></li>
+        </ul>
+      </li>
+
+      <li class="nav-item has-drop">
+        <button class="nav-link" aria-expanded="false">Prescriptions
+          <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M0 0h10L5 6z"/></svg>
+        </button>
+        <ul class="dropdown">
+          <li><a href="prescriptions.html#eps">EPS Nomination</a></li>
+          <li><a href="prescriptions.html#repeat">Repeat Prescriptions</a></li>
+          <li><a href="prescriptions.html#delivery">Collection &amp; Delivery</a></li>
+        </ul>
+      </li>
+
+      <li class="nav-item"><a class="nav-link" href="about.html">About Us</a></li>
+      <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+
+      <li class="nav-cta-mobile"><a class="btn btn-primary" href="booking.html">Book Online</a></li>
+    </ul>
+
+    <div class="nav-cta"><a class="btn btn-primary btn-sm" href="booking.html">Book Online</a></div>
+
+    <button class="burger" aria-expanded="false" aria-label="Menu"><span></span></button>
+  </nav>
+</header>
+
+<main id="main">
+
+<section class="page-banner page-banner--photo">
+  <div class="wrap">
+    <nav class="crumb" aria-label="Breadcrumb">
+      <a href="index.html">Home</a><span>/</span>Travel Clinic
+    </nav>
+    <p class="eyebrow">Private Service</p>
+    <h1>Travel Clinic</h1>
+    <p class="lead">A proper travel health consultation in Leicester — we look at where you're going, what you'll be doing there and how long you're staying, then recommend only what you actually need.</p>
+  </div>
+</section>
+
+<!-- ===== Book early warning ======================================== -->
+<section class="section-tight">
+  <div class="wrap">
+    <div class="notice warn reveal">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7.1 1.3a1 1 0 0 1 1.8 0l6.9 12.2a1 1 0 0 1-.9 1.5H1.1a1 1 0 0 1-.9-1.5zM8.9 12H7.1v1.8h1.8V12zm0-6.5H7.1v5h1.8v-5z"/></svg>
+      <div>
+        <h3>Book 6–8 weeks before you travel</h3>
+        <p>This matters. Several vaccines need a course of two or three doses spread over weeks, and your body needs time to build immunity before you fly. Leave it late and we may not be able to give you full protection. Travelling sooner than that? Still come in — some cover is almost always better than none, and we'll tell you honestly what's achievable.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Travel vaccine selector ================================== -->
+<section class="vac-selector" id="vaccine-selector" aria-labelledby="vac-title">
+  <div class="wrap">
+    <div class="vac-head">
+      <h2 id="vac-title">What vaccines do I need?</h2>
+      <p class="vac-sub">Pick where you're going to see what we recommend.</p>
+    </div>
+
+    <!-- Fallback shown when JavaScript is unavailable -->
+    <div class="vac-fallback">
+      <p class="vac-sub">This interactive selector needs JavaScript. You can still book a travel health consultation and we'll give you a full, personalised risk assessment:</p>
+      <div class="vac-actions">
+        <a class="btn btn-primary" href="tel:+441163602000">Call to book &mdash; 0116&nbsp;360&nbsp;2000</a>
+      </div>
+    </div>
+
+    <!-- Interactive tool (populated by JS) -->
+    <div class="vac-tool">
+      <div class="vac-grid">
+        <div class="vac-col-left">
+          <p class="vac-panel-title">Where are you going?</p>
+          <div class="vac-tabs" role="tablist" aria-label="Choose a continent"></div>
+          <div class="vac-countries" role="group" aria-label="Choose a country"></div>
+        </div>
+        <div class="vac-col-right">
+          <div class="vac-result" id="vac-result" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="vac-disclaimer">Recommendations based on TravelHealthPro (NaTHNaC) guidance. Individual advice depends on your specific itinerary — book a consultation for a full risk assessment.</p>
+  </div>
+</section>
+
+<!-- ===== Travel vaccinations ====================================== -->
+<section class="section" id="vaccinations">
+  <div class="wrap">
+    <div class="split">
+      <div class="split-media reveal">
+        <!-- IMAGE SLOT: travel / departures -->
+        <img src="/images/services/travel-vaccinations.webp" alt="Travel vaccinations at St Matthew's Pharmacy" loading="lazy" width="1280" height="853">
+      </div>
+      <div class="reveal">
+        <p class="eyebrow">Travel Vaccinations</p>
+        <h2>Cover matched to your trip, not a checklist</h2>
+        <p class="muted">Two people going to the same country can need completely different vaccines. A fortnight in a resort isn't the same trip as three months backpacking or visiting family in a rural area — the risks are different, so the advice should be too.</p>
+        <p class="muted">We'll go through your itinerary, your medical history and what you've already had, then build a plan around it. You'll get a clear written record of everything you've been given.</p>
+        <ul class="ticks">
+          <li>Hepatitis A &amp; B, typhoid, tetanus and diphtheria</li>
+          <li>Rabies, Japanese encephalitis and tick-borne encephalitis</li>
+          <li>Cholera and meningitis</li>
+          <li>Written record and certificates where required</li>
+        </ul>
+        <p class="muted" style="margin:14px 0 0"><strong>Travel appointments are booked by phone at the moment</strong> &mdash; please call and we&rsquo;ll book you in.</p>
+        <a class="btn btn-primary" style="margin-top:12px" href="tel:+441163602000">Call to book &mdash; 0116&nbsp;360&nbsp;2000</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Antimalarials ============================================ -->
+<section class="section" id="antimalarials">
+  <div class="wrap">
+    <div class="split">
+      <div class="split-media reveal">
+        <!-- IMAGE SLOT: tablets / medication -->
+        <img src="/images/services/medicines-closeup.webp" alt="Antimalarial tablets" loading="lazy" width="1280" height="853">
+      </div>
+      <div class="reveal">
+        <p class="eyebrow">Antimalarials</p>
+        <h2>Malaria prevention</h2>
+        <p class="muted">There's no vaccine for malaria, so prevention comes down to two things: not getting bitten, and taking the right tablets. We'll work out which region you're visiting, what resistance looks like there, and which option suits you.</p>
+        <p class="muted">The choice matters more than people think. Some need starting a week before you travel, others a day or two. Some are taken for four weeks after you get home; miss those and the whole course was wasted. We'll make sure you leave knowing exactly when to start and stop.</p>
+        <ul class="ticks">
+          <li>Atovaquone/proguanil, doxycycline and mefloquine</li>
+          <li>Region-specific advice based on current resistance patterns</li>
+          <li>Bite avoidance — nets, repellents and what actually works</li>
+          <li>Supplied without a GP prescription</li>
+        </ul>
+        <p class="muted" style="margin:14px 0 0"><strong>Travel appointments are booked by phone at the moment</strong> &mdash; please call and we&rsquo;ll book you in.</p>
+        <a class="btn btn-primary" style="margin-top:12px" href="tel:+441163602000">Call to book &mdash; 0116&nbsp;360&nbsp;2000</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Hajj & Umrah ============================================= -->
+<section class="section section-alt" id="hajj">
+  <div class="wrap">
+    <div class="split">
+      <div class="reveal">
+        <p class="eyebrow">Hajj &amp; Umrah</p>
+        <h2>Meningitis ACWY for pilgrims</h2>
+        <p class="muted">Saudi Arabia requires proof of the quadrivalent Meningitis ACWY vaccine for every Hajj and Umrah pilgrim as a condition of the visa. It must have been given at least 10 days before you arrive, and the certificate is valid for a set number of years depending on the vaccine used.</p>
+        <p class="muted">We supply the vaccine and the signed certificate your visa application needs. We know the requirements and the timings, and we can vaccinate a whole family in one visit — which is usually a lot easier than trying to get everyone a GP appointment.</p>
+        <ul class="ticks">
+          <li>Meningitis ACWY vaccine and signed certificate</li>
+          <li>Seasonal flu and other recommended vaccines for pilgrims</li>
+          <li>Family and group appointments welcome</li>
+          <li>Advice on staying well in crowds and in the heat</li>
+        </ul>
+        <p class="muted" style="margin:14px 0 0"><strong>Hajj &amp; Umrah appointments are booked by phone at the moment</strong> &mdash; please call and we&rsquo;ll book you in.</p>
+        <a class="btn btn-primary" style="margin-top:12px" href="tel:+441163602000">Call to book &mdash; 0116&nbsp;360&nbsp;2000</a>
+      </div>
+      <div class="split-media reveal">
+        <!-- IMAGE SLOT: Hajj / pilgrimage -->
+        <img src="/images/services/hajj-vaccines.webp" alt="Hajj and Umrah vaccinations" loading="lazy" width="1280" height="853">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Speciality vaccines ====================================== -->
+<section class="section" id="speciality">
+  <div class="wrap">
+    <div class="section-head center">
+      <p class="eyebrow">Speciality Vaccines</p>
+      <h2>Harder-to-find vaccines</h2>
+      <p class="lead" style="margin-inline:auto">Some vaccines your GP surgery won't stock, either because demand is low or because they're private-only. We can source them.</p>
+    </div>
+
+    <div class="grid grid-4">
+      <div class="panel reveal">
+        <h3>Rabies</h3>
+        <p class="muted" style="font-size:.88rem;margin:0">A three-dose course for travel to areas where medical help is hours away, or where you'll be around animals.</p>
+      </div>
+      <div class="panel reveal">
+        <h3>Japanese Encephalitis</h3>
+        <p class="muted" style="font-size:.88rem;margin:0">For longer stays in rural parts of Asia, particularly during the rice-growing season.</p>
+      </div>
+      <div class="panel reveal">
+        <h3>Tick-Borne Encephalitis</h3>
+        <p class="muted" style="font-size:.88rem;margin:0">For hiking, camping and forest work across central and eastern Europe.</p>
+      </div>
+      <div class="panel reveal">
+        <h3>Cholera</h3>
+        <p class="muted" style="font-size:.88rem;margin:0">An oral vaccine for aid workers and travellers heading somewhere with poor sanitation.</p>
+      </div>
+    </div>
+
+    <p class="muted" style="margin-top:26px;font-size:.88rem">Need something not listed here? Call us — if it's available in the UK we can usually order it in within a few days.</p>
+  </div>
+</section>
+
+<!-- ===== Prices =================================================== -->
+<section class="section section-alt" id="prices">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Vaccine Prices</p>
+      <h2>Prices</h2>
+      <p class="lead">The travel consultation itself is free — you only pay for what you decide to have.</p>
+    </div>
+
+    <div class="table-scroll reveal">
+      <table>
+        <caption class="sr-only">Travel vaccine prices at St Matthew's Pharmacy</caption>
+        <thead>
+          <tr>
+            <th scope="col">Vaccine</th>
+            <th scope="col">Full course</th>
+            <th scope="col">Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Chickenpox</td><td>2 doses</td><td class="price">£65</td></tr>
+          <tr><td>Chikungunya</td><td>1 dose</td><td class="price">£180</td></tr>
+          <tr><td>Cholera</td><td>1 dose</td><td class="price">£75</td></tr>
+          <tr><td>Diphtheria, Tetanus &amp; Polio (DTP)</td><td>1 dose</td><td class="price">£30</td></tr>
+          <tr><td>Hepatitis A</td><td>2 doses</td><td class="price">£30</td></tr>
+          <tr><td>Hepatitis A (Paediatric)</td><td>2 doses</td><td class="price">£30</td></tr>
+          <tr><td>Hepatitis B</td><td>3 doses</td><td class="price">£30</td></tr>
+          <tr><td>Hepatitis B (Paediatric)</td><td>3 doses</td><td class="price">£30</td></tr>
+          <tr><td>Human Papillomavirus (HPV)</td><td>1 dose</td><td class="price">£180</td></tr>
+          <tr><td>Japanese Encephalitis</td><td>2 doses</td><td class="price">£100</td></tr>
+          <tr><td>Measles, Mumps, Rubella (MMR)</td><td>2 doses</td><td class="price">£35</td></tr>
+          <tr><td>Meningitis ACWY + Certificate</td><td>1 dose (5 years validity)</td><td class="price">£35</td></tr>
+          <tr><td>Pneumococcal</td><td>1 dose</td><td class="price">£60</td></tr>
+          <tr><td>Rabies</td><td>3 doses</td><td class="price">£70</td></tr>
+          <tr><td>Respiratory Syncytial Virus (RSV)</td><td>2 doses</td><td class="price">£220</td></tr>
+          <tr><td>Shingles (Live)</td><td>1 dose</td><td class="price">£170</td></tr>
+          <tr><td>Tick-Borne Encephalitis</td><td>3 doses</td><td class="price">£70</td></tr>
+          <tr><td>Typhoid</td><td>1 dose</td><td class="price">£30</td></tr>
+          <tr><td>Whooping Cough</td><td>1 dose</td><td class="price">£40</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Book online (Cal.com) ==================================== -->
+<section class="section section-alt" id="book">
+  <div class="wrap">
+    <div class="section-head center">
+      <p class="eyebrow">Booking</p>
+      <h2>Book your travel consultation</h2>
+      <p class="lead" style="margin-inline:auto">Travel appointments are booked by phone at the moment. Please call the pharmacy and we&rsquo;ll book you in &mdash; try to call 6&ndash;8 weeks before you travel so there&rsquo;s time for any vaccine courses to work.</p>
+    </div>
+
+    <div style="text-align:center">
+      <a class="btn btn-primary" href="tel:+441163602000">Call to book &mdash; 0116&nbsp;360&nbsp;2000</a>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <h2>Travelling soon?</h2>
+    <p>Book your travel consultation now — the earlier you come in, the more we can do for you.</p>
+    <div class="cta-actions">
+      <a class="btn btn-primary" href="tel:+441163602000">Call to book &mdash; 0116&nbsp;360&nbsp;2000</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+
+      <div class="footer-col">
+        <div class="footer-brand">
+          <img src="/images/logo-icon.svg" alt="" width="38" height="38">
+          <span class="brand-text">St Matthew's <span class="accent">Pharmacy</span></span>
+        </div>
+        <p class="footer-about">Your independent NHS pharmacy on Malabar Road, serving the St Matthews community and the wider Leicester area.</p>
+        <div class="socials">
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M16 8a8 8 0 1 0-9.3 7.9v-5.6H4.7V8h2V6.3c0-2 1.2-3.1 3-3.1.9 0 1.8.1 1.8.1v2H10.5c-1 0-1.3.6-1.3 1.2V8h2.2l-.4 2.3H9.2v5.6A8 8 0 0 0 16 8z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.4c2.1 0 2.4 0 3.2.1.8 0 1.2.2 1.5.3.4.1.6.3.9.6.3.3.5.5.6.9.1.3.3.7.3 1.5 0 .8.1 1.1.1 3.2s0 2.4-.1 3.2c0 .8-.2 1.2-.3 1.5-.1.4-.3.6-.6.9-.3.3-.5.5-.9.6-.3.1-.7.3-1.5.3-.8 0-1.1.1-3.2.1s-2.4 0-3.2-.1c-.8 0-1.2-.2-1.5-.3-.4-.1-.6-.3-.9-.6-.3-.3-.5-.5-.6-.9-.1-.3-.3-.7-.3-1.5 0-.8-.1-1.1-.1-3.2s0-2.4.1-3.2c0-.8.2-1.2.3-1.5.1-.4.3-.6.6-.9.3-.3.5-.5.9-.6.3-.1.7-.3 1.5-.3.8 0 1.1-.1 3.2-.1M8 0C5.8 0 5.6 0 4.7.1c-.9 0-1.5.2-2 .4-.6.2-1 .5-1.5 1S.5 2.1.3 2.7c-.2.5-.4 1.1-.4 2C0 5.6 0 5.8 0 8s0 2.4.1 3.3c0 .9.2 1.5.4 2 .2.6.5 1 1 1.5s.9.8 1.5 1c.5.2 1.1.4 2 .4.9 0 1.1.1 3.3.1s2.4 0 3.3-.1c.9 0 1.5-.2 2-.4.6-.2 1-.5 1.5-1s.8-.9 1-1.5c.2-.5.4-1.1.4-2 0-.9.1-1.1.1-3.3s0-2.4-.1-3.3c0-.9-.2-1.5-.4-2-.2-.6-.5-1-1-1.5s-.9-.8-1.5-1c-.5-.2-1.1-.4-2-.4C10.4 0 10.2 0 8 0zm0 3.9a4.1 4.1 0 1 0 0 8.2 4.1 4.1 0 0 0 0-8.2zm0 6.8a2.7 2.7 0 1 1 0-5.4 2.7 2.7 0 0 1 0 5.4zm5.2-7a1 1 0 1 1-1.9 0 1 1 0 0 1 1.9 0z"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M0 1.6C0 .7.7 0 1.6 0h12.8c.9 0 1.6.7 1.6 1.6v12.8c0 .9-.7 1.6-1.6 1.6H1.6c-.9 0-1.6-.7-1.6-1.6V1.6zm4.9 11.6V6.2H2.5v7h2.4zM3.7 5.2c.8 0 1.4-.6 1.4-1.3 0-.7-.6-1.3-1.4-1.3s-1.4.6-1.4 1.3c0 .7.6 1.3 1.4 1.3zm5 8V9.3c0-.2 0-.4.1-.6.2-.4.6-.9 1.3-.9.9 0 1.3.7 1.3 1.7v3.7h2.4V9.2c0-2.2-1.2-3.2-2.8-3.2-1.3 0-1.8.7-2.2 1.2v-1H6.4c0 .7 0 7 0 7h2.3z"/></svg></a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="travel-clinic.html">Travel Clinic</a></li>
+          <li><a href="pharmacy-first.html">Pharmacy First</a></li>
+          <li><a href="prescriptions.html">Prescriptions</a></li>
+          <li><a href="booking.html">Book Online</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="cookie-policy.html">Cookie Policy</a></li>
+          <li><a href="terms.html">Terms &amp; Conditions</a></li>
+          <li><a href="disclaimer.html">Disclaimer</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3>Opening Hours</h3>
+        <ul class="footer-hours hours">
+          <li data-day="1"><span class="day">Mon</span><span>9:00 – 18:00</span></li>
+          <li data-day="2"><span class="day">Tue</span><span>9:00 – 18:00</span></li>
+          <li data-day="3"><span class="day">Wed</span><span>9:00 – 18:00</span></li>
+          <li data-day="4"><span class="day">Thu</span><span>9:00 – 18:00</span></li>
+          <li data-day="5"><span class="day">Fri</span><span>9:00 – 18:00</span></li>
+          <li data-day="6"><span class="day">Sat</span><span>9:00 – 13:00</span></li>
+          <li data-day="0"><span class="day">Sun</span><span>Closed</span></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3>Contact</h3>
+        <ul class="footer-contact">
+          <li>
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0a5 5 0 0 0-5 5c0 3.8 5 11 5 11s5-7.2 5-11a5 5 0 0 0-5-5zm0 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
+            <span>44 Malabar Road,<br>Leicester, LE1 2PD</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.6 1.3a1 1 0 0 1 1.4.2l1.5 2a1 1 0 0 1-.1 1.3l-.9.9a9 9 0 0 0 4.1 4.1l.9-.9a1 1 0 0 1 1.3-.1l2 1.5a1 1 0 0 1 .2 1.4l-1 1.3a1.6 1.6 0 0 1-1.8.5C7.6 12.6 3.4 8.4 1.8 3.1a1.6 1.6 0 0 1 .5-1.8z"/></svg>
+            <a href="tel:+441163602000">0116 360 2000</a>
+          </li>
+          <li>
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h13A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 12.5v-9zm1.7-.5L8 7.9 14.3 3H1.7zM15 4.2 8.3 9.4a.5.5 0 0 1-.6 0L1 4.2v8.3a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5V4.2z"/></svg>
+            <a href="mailto:info@stmatthewspharmacy.co.uk">info@stmatthewspharmacy.co.uk</a>
+          </li>
+        </ul>
+
+        <h3 style="margin-top:28px">Pharmacy Info</h3>
+        <p class="footer-reg">
+          <strong>Registered name:</strong> St Matthew's Pharmacy Ltd<br>
+          <strong>GPhC premises registration:</strong> <a href="https://www.pharmacyregulation.org/registers/pharmacy/registrationnumber/1034117" target="_blank" rel="noopener">1034117</a><br>
+          <strong>Company registration:</strong> 16919271<br>
+          <strong>Superintendent Pharmacist:</strong> Muhammad Shafire Rashid,
+          GPhC No. <a href="https://www.pharmacyregulation.org/registers/pharmacist/registrationnumber/2237265" target="_blank" rel="noopener">2237265</a>
+        </p>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; <span class="js-year">2026</span> St Matthew's Pharmacy. All rights reserved.</span>
+      <div class="footer-legal">
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="cookie-policy.html">Cookie Policy</a>
+        <a href="terms.html">Terms &amp; Conditions</a>
+        <a href="disclaimer.html">Disclaimer</a>
+        <button type="button" class="footer-cookie-btn" data-cookie-reopen>Cookie settings</button>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ==========================================================================
+   Travel vaccine selector — data + behaviour (self-contained, vanilla JS).
+   Recommendations follow the TravelHealthPro (NaTHNaC) "most travellers" vs
+   "some travellers" categorisation. Edit VACCINES / DATA below to update.
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  // --- vaccine reference: keyed so country data stays short and easy to edit ---
+  var VACCINES = {
+    hepA:       { name: 'Hepatitis A', desc: 'Spread through contaminated food and water.' },
+    typhoid:    { name: 'Typhoid', desc: 'Spread through contaminated food and water where sanitation is poor.' },
+    tetanus:    { name: 'Tetanus', desc: 'A booster if your last dose was over 10 years ago; protects against tetanus from wounds.' },
+    hepB:       { name: 'Hepatitis B', desc: 'Spread through blood and bodily fluids; advised for longer stays, healthcare work or possible medical treatment.' },
+    rabies:     { name: 'Rabies', desc: 'From bites or scratches of infected animals; advised for remote areas, longer trips or working with animals.' },
+    je:         { name: 'Japanese Encephalitis', desc: 'Mosquito-borne; advised for long or rural stays, especially in the rainy season.' },
+    cholera:    { name: 'Cholera', desc: 'Spread through contaminated water; advised for higher-risk trips, relief work or outbreak areas.' },
+    meningitis: { name: 'Meningitis (ACWY)', desc: 'Advised for close-contact or at-risk travel; required for Hajj and Umrah pilgrims.' },
+    tbe:        { name: 'Tick-borne Encephalitis', desc: 'From tick bites; advised for walkers and campers in forested areas.' },
+    polio:      { name: 'Polio', desc: 'A booster where polio remains a risk; may be required to leave some countries.' }
+  };
+
+
+  // --- country -> recommendations, grouped by continent ---
+  var DATA = {
+    'Africa': {
+      'Egypt':        { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','cholera'] },
+      'Morocco':      { most:['hepA','tetanus'], some:['hepB','rabies','typhoid'] },
+      'Kenya':        { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','cholera','meningitis'], malaria:true },
+      'Tanzania':     { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','cholera'], malaria:true },
+      'South Africa': { most:['hepA','tetanus'], some:['hepB','rabies','typhoid'], malaria:true },
+      'Uganda':       { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','cholera','meningitis'], malaria:true },
+      'Ghana':        { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','cholera','meningitis'], malaria:true },
+      'Nigeria':      { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','cholera','meningitis','polio'], malaria:true },
+      'Senegal':      { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','cholera','meningitis'], malaria:true },
+      'Zambia':       { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','cholera'], malaria:true },
+      'Malawi':       { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','cholera'], malaria:true },
+      'Ethiopia':     { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','cholera','meningitis','polio'], malaria:true },
+      'Somalia':      { most:['hepA','typhoid','tetanus','polio'], some:['hepB','rabies','cholera','meningitis'], malaria:true }
+    },
+    'Asia': {
+      'Pakistan':    { most:['hepA','typhoid','tetanus','polio'], some:['hepB','rabies','je','cholera','meningitis'], malaria:true },
+      'India':       { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','je','cholera'], malaria:true },
+      'Bangladesh':  { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','je','cholera'], malaria:true },
+      'Sri Lanka':   { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','je','cholera'], malaria:true },
+      'Nepal':       { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','je','cholera'], malaria:true },
+      'Thailand':    { most:['hepA','tetanus'], some:['hepB','rabies','typhoid','je','cholera'], malaria:true },
+      'Vietnam':     { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','je','cholera'], malaria:true },
+      'Indonesia':   { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','je','cholera'], malaria:true },
+      'Philippines': { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','je','polio'], malaria:true },
+      'China':       { most:['hepA','tetanus'], some:['hepB','rabies','typhoid','je'], malaria:true },
+      'Japan':       { most:['tetanus'], some:['hepB','je'], note:'A developed country — no specific travel vaccines are usually needed beyond making sure your routine UK vaccines are up to date.' },
+      'Malaysia':    { most:['hepA','tetanus'], some:['hepB','rabies','typhoid','je'], malaria:true },
+      'Singapore':   { most:['tetanus'], some:['hepA','hepB'], note:'A developed country — no specific travel vaccines are usually needed beyond making sure your routine UK vaccines are up to date.' }
+    },
+    'Latin America': {
+      'Brazil':     { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','cholera'], malaria:true },
+      'Peru':       { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','cholera'], malaria:true },
+      'Mexico':     { most:['hepA','tetanus'], some:['hepB','rabies','typhoid'], malaria:true },
+      'Argentina':  { most:['hepA','tetanus'], some:['hepB','rabies','typhoid'] },
+      'Colombia':   { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','cholera'], malaria:true },
+      'Costa Rica': { most:['hepA','tetanus'], some:['hepB','rabies','typhoid'] },
+      'Ecuador':    { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','cholera'], malaria:true },
+      'Bolivia':    { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','cholera'], malaria:true }
+    },
+    'Middle East': {
+      'Saudi Arabia': { most:['hepA','typhoid','tetanus','meningitis'], some:['hepB','rabies','polio'], note:'Hajj and Umrah pilgrims MUST show a valid Meningitis ACWY vaccination certificate to get a visa.' },
+      'UAE':          { most:['hepA','tetanus'], some:['hepB','rabies','typhoid'] },
+      'Jordan':       { most:['hepA','typhoid','tetanus'], some:['hepB','rabies'] },
+      'Egypt':        { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','cholera'] },
+      'Iran':         { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','polio'], malaria:true },
+      'Iraq':         { most:['hepA','typhoid','tetanus','polio'], some:['hepB','rabies','cholera'], malaria:true }
+    },
+    'North America': {
+      'USA':    { most:['tetanus'], some:['hepB','rabies'], note:'A developed country — no specific travel vaccines are usually needed beyond making sure your routine UK vaccines are up to date.' },
+      'Canada': { most:['tetanus'], some:['hepB','rabies'], note:'A developed country — no specific travel vaccines are usually needed beyond making sure your routine UK vaccines are up to date.' },
+      'Mexico': { most:['hepA','tetanus'], some:['hepB','rabies','typhoid'], malaria:true }
+    },
+    'Oceania': {
+      'Australia':        { most:['tetanus'], some:['hepB'], note:'A developed country — no specific travel vaccines are usually needed beyond making sure your routine UK vaccines are up to date.' },
+      'New Zealand':      { most:['tetanus'], some:['hepB'], note:'A developed country — no specific travel vaccines are usually needed beyond making sure your routine UK vaccines are up to date.' },
+      'Fiji':             { most:['hepA','typhoid','tetanus'], some:['hepB','rabies'] },
+      'Papua New Guinea': { most:['hepA','typhoid','tetanus'], some:['hepB','rabies','je','cholera'], malaria:true }
+    }
+  };
+
+  var CONTINENTS = ['Africa', 'Asia', 'Latin America', 'Middle East', 'North America', 'Oceania'];
+  var DEFAULT_CONTINENT = 'Asia';
+
+  var section = document.querySelector('.vac-selector');
+  if (!section) return;
+  var tabsEl = section.querySelector('.vac-tabs');
+  var countriesEl = section.querySelector('.vac-countries');
+  var resultEl = section.querySelector('#vac-result');
+  if (!tabsEl || !countriesEl || !resultEl) return;
+
+  function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  var PROMPT =
+    '<div class="vac-prompt">' +
+      '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0a5 5 0 0 0-5 5c0 3.8 5 11 5 11s5-7.2 5-11a5 5 0 0 0-5-5zm0 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>' +
+      '<span>Select a country to see recommendations.</span>' +
+    '</div>';
+
+  function cardHTML(key) {
+    var v = VACCINES[key];
+    if (!v) return '';
+    return '<div class="vac-card"><h4>' + esc(v.name) + '</h4><p>' + esc(v.desc) + '</p></div>';
+  }
+  var MALARIA_CARD =
+    '<div class="vac-card malaria"><h4>Malaria (prevention)</h4>' +
+    '<p>Malaria is present in parts of this country. This is not a vaccine — antimalarial tablets and bite avoidance may be advised depending on exactly where you go.</p></div>';
+
+  function renderResult(country, d) {
+    var html = '<div class="vac-fade">';
+    html += '<h3>Recommended for ' + esc(country) + '</h3>';
+    if (d.note) html += '<p class="vac-country-note">' + esc(d.note) + '</p>';
+
+    if (d.most && d.most.length) {
+      html += '<div class="vac-group"><p class="vac-group-h">Most Travellers</p><div class="vac-cards">' +
+              d.most.map(cardHTML).join('') + '</div></div>';
+    }
+
+    var someCards = (d.some || []).map(cardHTML).join('');
+    if (d.malaria) someCards += MALARIA_CARD;
+    if (someCards) {
+      html += '<div class="vac-group"><p class="vac-group-h">Some Travellers</p><div class="vac-cards">' +
+              someCards + '</div></div>';
+    }
+
+    html += '<p class="vac-routine">Whatever your destination, make sure your routine UK vaccinations (MMR, tetanus and polio) are up to date.</p>';
+
+    html += '<div class="vac-actions">' +
+        '<a class="btn btn-primary" href="tel:+441163602000">Call to book &mdash; 0116&nbsp;360&nbsp;2000</a>' +
+      '</div>';
+    html += '</div>';
+
+    resultEl.innerHTML = html;
+    var fade = resultEl.querySelector('.vac-fade');
+    requestAnimationFrame(function () { if (fade) fade.classList.add('in'); });
+  }
+
+  function renderCountries(continent) {
+    var countries = Object.keys(DATA[continent] || {});
+    countriesEl.innerHTML = countries.map(function (c) {
+      return '<button type="button" class="vac-country" role="button" aria-pressed="false" data-country="' + esc(c) + '">' + esc(c) + '</button>';
+    }).join('');
+  }
+
+  function selectContinent(name) {
+    tabsEl.querySelectorAll('.vac-tab').forEach(function (t) {
+      t.setAttribute('aria-selected', String(t.getAttribute('data-continent') === name));
+    });
+    renderCountries(name);
+    resultEl.innerHTML = PROMPT;   // reset until a country is picked
+  }
+
+  // build continent tabs
+  tabsEl.innerHTML = CONTINENTS.map(function (c) {
+    return '<button type="button" class="vac-tab" role="tab" aria-selected="false" data-continent="' + esc(c) + '">' + esc(c) + '</button>';
+  }).join('');
+
+  tabsEl.addEventListener('click', function (e) {
+    var t = e.target.closest('.vac-tab');
+    if (t) selectContinent(t.getAttribute('data-continent'));
+  });
+
+  countriesEl.addEventListener('click', function (e) {
+    var b = e.target.closest('.vac-country');
+    if (!b) return;
+    countriesEl.querySelectorAll('.vac-country').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
+    b.setAttribute('aria-pressed', 'true');
+    var country = b.getAttribute('data-country');
+    var continent = tabsEl.querySelector('.vac-tab[aria-selected="true"]').getAttribute('data-continent');
+    renderResult(country, DATA[continent][country]);
+  });
+
+  // go
+  selectContinent(DEFAULT_CONTINENT);
+  section.setAttribute('data-ready', '');   // reveals the tool, hides the fallback
+})();
+</script>
+<script src="/js/main.js" defer></script>
+</body>
+</html>

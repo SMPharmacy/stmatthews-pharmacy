@@ -1,0 +1,11 @@
+#!/bin/sh
+# Strip any "Co-authored-by:" trailer from commit messages.
+#
+# Why: this repo auto-deploys to Netlify, whose plan blocks builds from a
+# private repo when a commit lists a contributor it can't verify. A
+# Co-Authored-By line adds exactly such a contributor and blocks the deploy.
+# This hook removes those lines so every commit has only the repo owner.
+msg="$1"
+[ -f "$msg" ] || exit 0
+grep -viE '^[[:space:]]*Co-authored-by:[[:space:]]' "$msg" > "$msg.tmp" 2>/dev/null && mv -f "$msg.tmp" "$msg"
+exit 0
