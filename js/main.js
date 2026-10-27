@@ -226,9 +226,23 @@
   ];
 
   function initHours() {
+    // Use Europe/London wall-clock time so the pill always matches the opening
+    // hours box regardless of the visitor's own time zone (handles GMT/BST).
     var now = new Date();
-    var day = now.getDay();
-    var mins = now.getHours() * 60 + now.getMinutes();
+    var parts = {};
+    try {
+      new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Europe/London', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false
+      }).formatToParts(now).forEach(function (p) { parts[p.type] = p.value; });
+    } catch (e) { parts = {}; }
+    var DAYS = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+    var day = (parts.weekday in DAYS) ? DAYS[parts.weekday] : now.getDay();
+    var hr = parseInt(parts.hour, 10);
+    if (hr === 24) hr = 0;
+    if (isNaN(hr)) hr = now.getHours();
+    var min = parseInt(parts.minute, 10);
+    if (isNaN(min)) min = now.getMinutes();
+    var mins = hr * 60 + min;
 
     // Highlight today's row in any hours list on the page.
     document.querySelectorAll('.hours').forEach(function (list) {
