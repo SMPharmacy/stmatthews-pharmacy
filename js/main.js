@@ -540,8 +540,25 @@
     } catch (e) { return null; }   // private mode / storage blocked
   }
 
-  function saveConsent(analytics) {
-    var data = { necessary: true, analytics: !!analytics, ts: new Date().toISOString(), v: 1 };
+  // Google Consent Mode v2. Advertising storage (ad_storage / ad_user_data /
+  // ad_personalization) is granted only when the visitor opts in to advertising;
+  // analytics_storage follows the analytics choice. Denied by default (set in the
+  // <head> on every page), so the Google Ads tag sets no ad cookies until consent.
+  function updateGoogleConsent(data) {
+    var ad = (data && data.marketing) ? 'granted' : 'denied';
+    var an = (data && data.analytics) ? 'granted' : 'denied';
+    if (typeof window.gtag === 'function') {
+      window.gtag('consent', 'update', {
+        'ad_storage': ad,
+        'ad_user_data': ad,
+        'ad_personalization': ad,
+        'analytics_storage': an
+      });
+    }
+  }
+
+  function saveConsent(analytics, marketing) {
+    var data = { necessary: true, analytics: !!analytics, marketing: !!marketing, ts: new Date().toISOString(), v: 2 };
     try { localStorage.setItem(CONSENT_KEY, JSON.stringify(data)); } catch (e) { /* ignore */ }
     applyConsent(data);
     return data;
@@ -549,6 +566,7 @@
 
   function applyConsent(data) {
     window.stmConsent = data;
+    updateGoogleConsent(data);
     if (data && data.analytics) {
       // Gated behind consent by construction — GA only loads from here.
       loadAnalytics();
@@ -572,8 +590,9 @@
     banner.innerHTML =
       '<div class="wrap">' +
         '<p>We use cookies to make this site work and to process your bookings. ' +
-        'We would also like to set optional analytics cookies to help us improve it, ' +
-        'but only if you agree. Read our <a href="cookie-policy.html">Cookie Policy</a>.</p>' +
+        'We would also like to set optional analytics and advertising cookies to help us ' +
+        'improve the site and measure our Google Ads, but only if you agree. ' +
+        'Read our <a href="cookie-policy.html">Cookie Policy</a>.</p>' +
         '<div class="cookie-actions">' +
           '<button type="button" class="btn btn-primary btn-sm" data-cookie="accept">Accept all</button>' +
           '<button type="button" class="btn btn-ghost btn-sm" data-cookie="reject">Reject optional</button>' +
@@ -606,6 +625,14 @@
             '<span class="track"></span><span class="thumb"></span>' +
           '</label>' +
         '</div>' +
+        '<div class="cookie-cat">' +
+          '<div><h3>Advertising</h3><p>Let Google Ads set cookies to measure the ' +
+          'effectiveness of our advertising and show you more relevant ads. Off by default.</p></div>' +
+          '<label class="switch">' +
+            '<input type="checkbox" id="cookie-marketing" aria-label="Allow advertising cookies">' +
+            '<span class="track"></span><span class="thumb"></span>' +
+          '</label>' +
+        '</div>' +
         '<div class="cookie-modal-actions">' +
           '<button type="button" class="btn btn-primary btn-sm" data-cookie="save">Save preferences</button>' +
           '<button type="button" class="btn btn-ghost btn-sm" data-cookie="close">Cancel</button>' +
@@ -616,6 +643,7 @@
     document.body.appendChild(modal);
 
     var toggle = modal.querySelector('#cookie-analytics');
+    var marketingToggle = modal.querySelector('#cookie-marketing');
     var lastFocus = null;
 
     function showBanner() {
@@ -625,7 +653,9 @@
 
     function openModal() {
       lastFocus = document.activeElement;
-      toggle.checked = !!(readConsent() || {}).analytics;   // reflect saved choice
+      var saved = readConsent() || {};
+      toggle.checked = !!saved.analytics;            // reflect saved choices
+      marketingToggle.checked = !!saved.marketing;
       modal.classList.add('show');
       toggle.focus();
     }
@@ -638,10 +668,10 @@
       var t = e.target.closest('[data-cookie]');
       if (t) {
         var action = t.getAttribute('data-cookie');
-        if (action === 'accept') { saveConsent(true);  hideBanner(); closeModal(); }
-        if (action === 'reject') { saveConsent(false); hideBanner(); closeModal(); }
+        if (action === 'accept') { saveConsent(true, true);   hideBanner(); closeModal(); }
+        if (action === 'reject') { saveConsent(false, false); hideBanner(); closeModal(); }
         if (action === 'manage') { openModal(); }
-        if (action === 'save')   { saveConsent(toggle.checked); hideBanner(); closeModal(); }
+        if (action === 'save')   { saveConsent(toggle.checked, marketingToggle.checked); hideBanner(); closeModal(); }
         if (action === 'close')  { closeModal(); }
         return;
       }
